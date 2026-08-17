@@ -1,4 +1,4 @@
-import { Pool, neonConfig } from "@neondatabase/serverless";
+import { neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@/generated/prisma/client";
 import ws from "ws";
@@ -10,8 +10,8 @@ function createClient() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
 
-  const pool = new Pool({ connectionString: url });
-  const adapter = new PrismaNeon(pool);
+  // PrismaNeon takes a PoolConfig (plain object), not a Pool instance.
+  const adapter = new PrismaNeon({ connectionString: url });
 
   return new PrismaClient({
     adapter,
