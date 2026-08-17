@@ -1,26 +1,327 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   DevAnts Design System
+   Brand teal sampled from the DevAnts ant-chevron mark.
+   Tokens: primitive (--teal-*) -> semantic (--color-*) -> component usage.
+   ========================================================================== */
+
+@theme {
+  /* --- Primitive: brand teal ramp ------------------------------------- */
+  --color-teal-50: #eefdfb;
+  --color-teal-100: #d3f9f5;
+  --color-teal-200: #a8f1ec;
+  --color-teal-300: #6ee4de;
+  --color-teal-400: #2fcfc9;
+  --color-teal-500: #12b2ad;
+  --color-teal-600: #0d8a86; /* logo mid-tone */
+  --color-teal-700: #0f6e6c;
+  --color-teal-800: #04565c; /* logo deep shadow */
+  --color-teal-900: #073c41;
+  --color-teal-950: #032427;
+
+  /* --- Primitive: ink (near-black with a teal cast) ------------------- */
+  --color-ink-950: #04090a;
+  --color-ink-900: #060d0e;
+  --color-ink-850: #0a1416;
+  --color-ink-800: #0f1c1e;
+  --color-ink-700: #16282b;
+  --color-ink-600: #1f3639;
+
+  /* --- Semantic ------------------------------------------------------- */
+  --color-background: var(--color-ink-950);
+  --color-foreground: #e8f4f3;
+  --color-primary: #12b2ad;
+  --color-on-primary: #02201f;
+  --color-accent: #2fcfc9;
+  --color-surface: #0a1416;
+  --color-surface-raised: #0f1c1e;
+  --color-muted: #16282b;
+  --color-muted-foreground: #8aa5a4;
+  --color-border: #16302f;
+  --color-border-strong: #1f4544;
+  --color-destructive: #f2555a;
+  --color-success: #2fcf94;
+  --color-warning: #f0b429;
+
+  /* --- Typography ----------------------------------------------------- */
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-mono: var(--font-sometype), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /*
+    Fluid display scale. Tuned for Anton — a condensed face needs looser
+    tracking and tighter leading than the negative letter-spacing you'd use on
+    a normal-width grotesque.
+  */
+  --text-display-xl: clamp(3rem, 13vw, 12rem);
+  --text-display-xl--line-height: 0.84;
+  --text-display-xl--letter-spacing: 0.005em;
+  --text-display-l: clamp(2.5rem, 7vw, 6rem);
+  --text-display-l--line-height: 0.88;
+  --text-display-l--letter-spacing: 0.005em;
+  --text-display-m: clamp(2rem, 4.5vw, 3.75rem);
+  --text-display-m--line-height: 0.95;
+  --text-display-m--letter-spacing: 0.01em;
+
+  /* --- Spacing rhythm (density 4/10 — marketing, roomy) --------------- */
+  --spacing-section: clamp(5rem, 12vw, 11rem);
+  --spacing-gutter: clamp(1.25rem, 5vw, 4.5rem);
+
+  /* --- Motion --------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-brand: cubic-bezier(0.23, 0.86, 0.39, 0.96);
+  --ease-in-out-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Radii ---------------------------------------------------------- */
+  --radius-card: 1.25rem;
+
+  /* --- Custom animations ---------------------------------------------- */
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 38s linear infinite;
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-spin-slow: spin 22s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes marquee-reverse {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+/*
+  Hero entrance. Deliberately CSS, not JS: the headline is the single most
+  important thing on the site, so its reveal must not depend on a JS animation
+  library mounting correctly. CSS keyframes run or the browser is broken.
+*/
+@keyframes mask-rise {
+  from {
+    transform: translateY(108%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+/* Hero object entrance — lands before any text, per the reference sequence */
+@keyframes object-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6%) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes rise-fade {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  /*
+    No `scroll-behavior: smooth` here. Lenis virtualises scrolling, and a native
+    smooth-scroll running underneath it fights every frame — that conflict is
+    what makes wheel input feel sticky. Anchor jumps go through Lenis instead.
+  */
+  html {
+    -webkit-text-size-adjust: 100%;
+    /*
+      `clip`, never `hidden`. Both stop the sideways scroll that oversized
+      decorative shapes cause, but `hidden` turns the element into a scroll
+      container — which silently kills every `position: sticky` child, and this
+      page depends on sticky for the hero and the service columns.
+    */
+    overflow-x: clip;
+  }
+
+  /* Lenis owns scrolling when active; disable native smooth to avoid fighting */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-teal-400);
+    color: #02201f;
+  }
+
+  /* Visible, brand-tinted focus ring — never removed */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Brand scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-teal-800);
+    border-radius: 99px;
+    border: 2px solid var(--color-ink-950);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-teal-600);
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 88rem;
+  padding-inline: var(--spacing-gutter);
+}
+
+/* Teal gradient text used for the second line of display headings */
+@utility text-gradient-brand {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-teal-200) 0%,
+    var(--color-teal-400) 45%,
+    var(--color-teal-600) 100%
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hairline grid backdrop */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-teal-500) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-teal-500) 9%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Fine noise to keep large dark fields from banding */
+@utility bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
+}
+
+/* Hero entrance helpers — `backwards` holds the from-state during the delay */
+@utility animate-mask-rise {
+  animation: mask-rise 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@utility animate-rise-fade {
+  animation: rise-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@utility animate-object-drop {
+  animation: object-drop 1.1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* 3D scene helpers */
+@utility scene-3d {
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+}
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Glass card surface */
+@utility glass {
+  background-color: color-mix(in oklab, var(--color-teal-950) 55%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--color-teal-400) 14%, transparent);
+}
+
+/* ==========================================================================
+   Reduced motion — hard stop on decorative animation
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

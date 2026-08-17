@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# local SQLite database — rebuild with `npx prisma migrate dev && npx prisma db seed`
+prisma/*.db
+prisma/*.db-journal
+
+# clone-ui skill working files
+.clone-ui/

@@ -1,0 +1,104 @@
+// DevAnts — content database
+// SQLite for local/MVP. Swap `provider` to "postgresql" for production; no model changes needed.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+/// A case study in "Our Work". Fully editable from /admin.
+model Project {
+  id       String @id @default(cuid())
+  slug     String @unique
+  title    String
+  /// Short line under the title in the grid, e.g. "Fintech · Mobile App"
+  subtitle String
+  /// Primary category used by the work-page filter
+  category String
+  /// Client or product owner name
+  client   String
+  /// Year delivered, e.g. "2026"
+  year     String
+
+  /// One-sentence hook shown on hover in the grid
+  summary   String
+  /// Long-form case study body (markdown-ish plain text, rendered as paragraphs)
+  body      String
+  /// The problem the client came with
+  challenge String
+  /// What DevAnts built
+  solution  String
+  /// Comma-separated outcome bullets, e.g. "3.2x faster checkout,+41% retention"
+  outcomes  String
+
+  /// Comma-separated tech slugs matching src/lib/tech.ts, e.g. "nextjs,node,postgres"
+  stack String
+
+  /// Hero/cover image URL
+  coverImage String
+  /// Comma-separated additional image URLs for the detail gallery
+  gallery    String @default("")
+  /// Live site or store listing
+  liveUrl    String @default("")
+
+  /// Pin to the homepage showcase
+  featured  Boolean  @default(false)
+  /// Manual sort order — lower shows first
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured, order])
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Client testimonial. Submitted publicly, shown only after admin approval.
+model Testimonial {
+  id      String @id @default(cuid())
+  name    String
+  role    String
+  company String
+  /// Optional — only used to follow up, never rendered publicly
+  email   String @default("")
+  quote   String
+  rating  Int    @default(5)
+  /// Optional avatar URL
+  avatar  String @default("")
+  /// Optional related project slug
+  projectSlug String @default("")
+
+  status      TestimonialStatus @default(PENDING)
+  /// Pin to the top of the testimonials rail
+  featured    Boolean           @default(false)
+  /// Internal note from whoever reviewed it
+  adminNote   String            @default("")
+  submittedAt DateTime          @default(now())
+  reviewedAt  DateTime?
+
+  @@index([status, featured])
+}
+
+/// Inbound project enquiry from the contact form.
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String   @default("")
+  budget    String   @default("")
+  /// Comma-separated service slugs the lead ticked
+  services  String   @default("")
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
