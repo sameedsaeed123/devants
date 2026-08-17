@@ -87,9 +87,15 @@ export function Hero() {
             // leading-[1] not [0.85]: at this size a sub-1 line-height makes the
             // glyph box shorter than the ascenders, which clips the tops of the
             // letters against the container edge.
-            // min(vw, vh) caps the wordmark on BOTH axes so it can never grow
-            // taller than the space available above the subhead and CTA.
-            className="animate-rise-fade flex items-start font-sans text-[clamp(2.5rem,min(21vw,34vh),17rem)] leading-[1] font-semibold tracking-[-0.045em] text-foreground"
+            /*
+              Two guards against the top of the letters being cut off:
+                - min(vw, vh) caps the size on BOTH axes, so a short window
+                  shrinks the wordmark instead of pushing it off screen.
+                - pt-[0.18em] is headroom in EM, so it scales with the font.
+                  Ink sits ~11% of the font size above the element box, and a
+                  fixed pixel padding only happens to be enough at one size.
+            */
+            className="animate-rise-fade flex items-start pt-[0.18em] font-sans text-[clamp(2.5rem,min(20vw,30vh),16rem)] leading-[1] font-semibold tracking-[-0.045em] text-foreground"
             style={{ animationDelay: "0.5s" }}
           >
             DevAnts
