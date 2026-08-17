@@ -1,14 +1,20 @@
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@/generated/prisma/client";
+import ws from "ws";
 
-// Prisma 7 requires an explicit driver adapter.
-// Swapping to Postgres later means changing this adapter + the schema provider only.
+// Required for Neon's WebSocket-based connection in Node.js / serverless runtimes.
+neonConfig.webSocketConstructor = ws;
+
 function createClient() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
 
+  const pool = new Pool({ connectionString: url });
+  const adapter = new PrismaNeon(pool);
+
   return new PrismaClient({
-    adapter: new PrismaBetterSqlite3({ url }),
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 }
